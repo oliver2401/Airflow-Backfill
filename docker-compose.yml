@@ -9,7 +9,6 @@ x-environment: &airflow_environment
   - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
   - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
   - AIRFLOW__WEBSERVER__RBAC=False
-x-airflow-image: &airflow_image apache/airflow:2.0.0-python3.8
 # ====================================== /AIRFLOW ENVIRONMENT VARIABLES ======================================
 services:
   postgres:
@@ -23,20 +22,14 @@ services:
   init:
     build:
       context: docker/airflow-data
-      args:
-        AIRFLOW_BASE_IMAGE: *airflow_image
-    image: manning-airflow/airflow-data
     depends_on:
       - postgres
     environment: *airflow_environment
     entrypoint: /bin/bash
-    command: -c 'airflow db upgrade && sleep 5 && airflow users create --username admin --password admin --firstname Anonymous --lastname Admin --role Admin --email admin@example.org'
+    command: -c 'airflow db upgrade && sleep 5 && airflow users create --username MLBros --password MLBros --firstname MLBros --lastname MLBros --role Admin --email MLBros@example.org'
   webserver:
     build:
       context: docker/airflow-data
-      args:
-        AIRFLOW_BASE_IMAGE: *airflow_image
-    image: manning-airflow/airflow-data
     restart: always
     depends_on:
       - postgres
@@ -49,9 +42,6 @@ services:
   scheduler:
     build:
       context: docker/airflow-data
-      args:
-        AIRFLOW_BASE_IMAGE: *airflow_image
-    image: manning-airflow/airflow-data
     restart: always
     depends_on:
       - postgres
@@ -63,7 +53,6 @@ services:
     command: scheduler
   events_api:
     build: ./docker/events-api
-    image: manning-airflow/events-api
     ports:
       - "5000:5000"
 
